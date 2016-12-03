@@ -9,13 +9,19 @@ import CtoF
 import Relay_Fire
 import WriteTempData
 import atexit
-import TCPServer
+#import TCPServer
+import RPi.GPIO as GPIO
 
 from time import sleep
 from Tkinter import *
 
 Set_Temp = 60
 Current_Temp = 60
+input_Temp_Up = 17
+input_Temp_Down = 22
+
+GPIO.setup(input_Temp_Up, GPIO.IN)
+GPIO.setup(input_Temp_Down, GPIO.IN)
 
 top = Tkinter.Tk()
 display_var = Tkinter.IntVar()
@@ -38,15 +44,35 @@ def read_Current_Tempature():
 		faren = CtoF.C_to_F(faren)
 		Current_Temp = faren
 		print("Current Temp:",faren)
-		display_CT.set(faren)
+		display_CT.set('{:.4}'.format(float(faren)))
 		myHum = sensor.humidity()
 		print("Humidity is:",myHum)
-		display_Hum.set(myHum)
+		display_Hum.set('{:.4}'.format(float(myHum)))
 		myWrite.write(str(Current_Temp), str(myHum))
 		sleep(3)
 
 	sensor.cancel()
 	pi.stop()
+pass
+
+def watch_For_Input_Pins():
+	"Watches for the inputs on the LCD panel"
+#	global Set_Temp
+	global input_Temp_Up
+	global input_Temp_Down
+
+	while 1:
+		#sleep(1)
+		#print("Watching for input")
+		if GPIO.input(input_Temp_Up):
+			Set_Temp+=1
+			print("Button press increase temp")
+		if GPIO.input(input_Temp_Down):
+			Set_Temp-=1
+			print("Button press decrese temp")
+	
+
+
 pass
 
 def fire_Furn():
@@ -122,10 +148,12 @@ if __name__ == "__main__":
 	global data
 	#Button set up
 	display_var.set(Set_Temp)
-	button_Increase = Tkinter.Button(top, text = "++Increase", command = increase_tempature)
-	button_Increase.pack()
-	button_Decrease = Tkinter.Button(top, text = "--Decrease", command = decrease_tempature)
-	button_Decrease.pack()
+	frame_5 = Frame(top)
+	frame_5.pack()
+	button_Increase = Tkinter.Button(frame_5, text = "++Increase", command = increase_tempature, height = 4, width = 15)
+	button_Decrease = Tkinter.Button(frame_5, text = "--Decrease", command = decrease_tempature, height = 4, width = 15)
+	button_Increase.pack(side=LEFT)
+	button_Decrease.pack(side=RIGHT)
 
 	#Heating, Cooling, Off radio button
 	frame_4 = Frame(top)
@@ -139,7 +167,7 @@ if __name__ == "__main__":
 	frame_1.pack()
 	label_1 = Tkinter.Label(frame_1, text="Hold tempature:")
 	label_1.pack(side = LEFT)
-	label_SetTemp = Tkinter.Label(frame_1, textvariable=display_var)
+	label_SetTemp = Tkinter.Label(frame_1, textvariable=display_var, font=("Helvetica", 16), fg="orange")
 	label_SetTemp.pack(side = RIGHT)
 
 	#Current Tempature Display
@@ -147,7 +175,7 @@ if __name__ == "__main__":
 	frame_2.pack()
 	label_CT = Tkinter.Label(frame_2, text="Current Temperature:")
 	label_CT.pack(side=LEFT)
-	Label_CT_Val = Tkinter.Label(frame_2, textvariable=display_CT)
+	Label_CT_Val = Tkinter.Label(frame_2, textvariable=display_CT, font=("Helvetica", 16), fg="Green")
 	Label_CT_Val.pack(side = RIGHT)
 
 	#Current Humidity Display
@@ -160,11 +188,12 @@ if __name__ == "__main__":
 
 	thread.start_new_thread(read_Current_Tempature, ())
 	thread.start_new_thread(fire_Furn, ())
+#	thread.start_new_thread(watch_For_Input_Pins, ())
 	
 	atexit.register(close)
 
-   	myComm = TCPServer.Andriod_Comms(Comms_Callback)
-	myComm.start()
+#   	myComm = TCPServer.Andriod_Comms(Comms_Callback)
+#	myComm.start()
 
 
 

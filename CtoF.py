@@ -7,3 +7,10 @@ def C_to_F(cent):
 	f = f / 5
 	f = f + 32
 	return f
+
+
+if __name__ == "__main__":
+	print "Testing function"
+	print C_to_F(20)
+	print C_to_F(0)
+	print C_to_F(100)

@@ -3,36 +3,38 @@ import time
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM) # Broadcom pin-numbering scheme
-GPIO.setup(14, GPIO.OUT) 
-GPIO.setup(15, GPIO.OUT)
-GPIO.setup(18, GPIO.OUT)
-GPIO.setup(23, GPIO.OUT)
+HEAT = 3
+COOL = 5
+FAN = 6
+
+GPIO.setup(HEAT, GPIO.OUT) 
+GPIO.setup(COOL, GPIO.OUT)
+GPIO.setup(FAN, GPIO.OUT)
 
 def Heat_On():
-	GPIO.output(14, GPIO.LOW)
-        GPIO.output(15, GPIO.HIGH)
+	GPIO.output(HEAT, GPIO.LOW)
+        GPIO.output(COOL, GPIO.HIGH)
 	#print("Firing Heat")
 pass
 
 def Heat_Off():
-        GPIO.output(14, GPIO.HIGH)
+        GPIO.output(HEAT, GPIO.HIGH)
 pass
 
 def Cool_On():
-	GPIO.output(15, GPIO.LOW)
-        GPIO.output(14, GPIO.HIGH)
+	GPIO.output(COOL, GPIO.LOW)
+        GPIO.output(HEAT, GPIO.HIGH)
 	#print("Firing Cool")
 pass
 
 def Cool_Off():
-	GPIO.output(15, GPIO.HIGH)
+	GPIO.output(COOL, GPIO.HIGH)
 pass
 
 def All_Off():
-	GPIO.output(14, GPIO.HIGH)
-	GPIO.output(15, GPIO.HIGH)
-	GPIO.output(18, GPIO.HIGH)
-	GPIO.output(23, GPIO.HIGH)
+	GPIO.output(HEAT, GPIO.HIGH)
+	GPIO.output(COOL, GPIO.HIGH)
+	GPIO.output(FAN, GPIO.HIGH)
 	#print("All Off")
 pass
 
