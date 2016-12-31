@@ -6,10 +6,20 @@ GPIO.setmode(GPIO.BCM) # Broadcom pin-numbering scheme
 HEAT = 3
 COOL = 5
 FAN = 6
+POWER = 2
 
 GPIO.setup(HEAT, GPIO.OUT) 
 GPIO.setup(COOL, GPIO.OUT)
 GPIO.setup(FAN, GPIO.OUT)
+GPIO.setup(POWER, GPIO.OUT)
+
+def Init_Power():
+	GPIO.output(POWER, GPIO.LOW)
+pass
+
+def Exit_Power():
+	GPIO.output(POWER, GPIO.HIGH)
+pass	
 
 def Heat_On():
 	GPIO.output(HEAT, GPIO.LOW)
