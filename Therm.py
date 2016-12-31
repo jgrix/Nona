@@ -11,6 +11,7 @@ import WriteTempData
 import atexit
 #import TCPServer
 import RPi.GPIO as GPIO
+import atexit
 
 from time import sleep
 from Tkinter import *
@@ -79,7 +80,7 @@ def fire_Furn():
 	#global Mode
 	#global Current_Temp
 	#global Set_Temp
-	
+	recent_act = False
 	sleep(8) #Sensor Lag	
 
 	while True:
@@ -90,17 +91,21 @@ def fire_Furn():
 			#print("Off")		
 			Relay_Fire.All_Off()
 		if mode == 1: #Heating
-			#print("Heating")
-			if Current_Temp <= Set_Temp:				
+			print("Heating")
+			if int(Current_Temp) < int(Set_Temp):
+				print("Fire heat on")				
 				Relay_Fire.Heat_On()
-			else:
+			elif int(Current_Temp) > int(Set_Temp):
+				print("Fire heat off")
 				Relay_Fire.All_Off()
+			else:
+				print("Heating no action")
 			
 		if mode == 2: #Cooling
 			#print("Cooling")
-			if Current_Temp >= Set_Temp:
+			if int(Current_Temp) > int(Set_Temp):
 				Relay_Fire.Cool_On()
-			else:
+			elif int(Current_Temp) < int(Set_Temp):
 				Relay_Fire.All_Off()
 
 		
@@ -146,6 +151,8 @@ def Comms_Callback(arg1):
 
 if __name__ == "__main__":
 	global data
+	Relay_Fire.Init_Power() #Fires our relay diverting power from the back up thermostat
+	atexit.register(Relay_Fire.Exit_Power)
 	#Button set up
 	display_var.set(Set_Temp)
 	frame_5 = Frame(top)
