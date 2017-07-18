@@ -1,27 +1,22 @@
 package com.grixie.Nona;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.support.v4.app.Fragment;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.util.*;
-
-import com.grixie.Nona.R;
+import android.view.View;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private TCPClient mTcpClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,15 +24,18 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        final HTTP_Request httpReq = new HTTP_Request(this);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.myFrameLayout, new Frag_One()).commitAllowingStateLoss();
+        getSupportFragmentManager().beginTransaction().replace(R.id.myFrameLayout, new Frag_Thermostat()).commitAllowingStateLoss();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                httpReq.pullInformation();
+                Snackbar.make(view, "Requesting update from server", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+
             }
         });
 
@@ -50,20 +48,9 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        SDLService myService = new SDLService();
-        myService.startProxy();
+        //SDLService myService = new SDLService();
+        //myService.startProxy();
 
-        new connectTask().execute("");
-
-    }
-
-    public class connectTask extends AsyncTask<String, String, TCPClient> {
-        @Override
-        protected TCPClient doInBackground(String... message){
-            mTcpClient = new TCPClient(new TCPClient.OnMessageReceived(){ public void messageReceived(String message){Log.d("TCP", message);}});
-            mTcpClient.run();
-            return null;
-        }
     }
 
     @Override
@@ -105,21 +92,14 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         Fragment fragment = null;
 
-        if (id == R.id.nav_camera) {
-            //fragment = new Frag_One();
-            Frag_One myFrag = new Frag_One();
-            myFrag.setClient(mTcpClient);
-            fragment = myFrag;
-        } else if (id == R.id.nav_gallery) {
-            fragment = new Frag_Two();
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        if (id == R.id.nav_Thermostat) {
+            fragment = new Frag_Thermostat();
+        } else if (id == R.id.nav_Weather) {
+            fragment = new Frag_Weather();
+        } else if (id == R.id.nav_Cost) {
+            fragment = new Frag_Cost();
+        } else if (id == R.id.nav_History) {
+            fragment = new Frag_History();
         }
 
         if(fragment != null)
