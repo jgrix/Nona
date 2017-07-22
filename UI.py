@@ -1,5 +1,4 @@
 import Tkinter
-
 from time import sleep
 from Tkinter import *
 
@@ -13,8 +12,8 @@ setTemp = 60
 curTemp = 60
 
 class Page(Tkinter.Frame):
-    def __init__(self, *args, **kwards):
-        Tkinter.Frame.__init__(self, *args, **kwards)
+    def __init__(self, *args, **kwargs):
+        Tkinter.Frame.__init__(self, *args, **kwargs)
     pass
     def show(self):
         self.lift()
@@ -24,7 +23,7 @@ pass
 
 class Page_Controls(Page):
     def __init__(self, *args, **kwargs):
-        Page.__init__(self, *args, **kwards)
+        Page.__init__(self, *args, **kwargs)
         #Button set up
         display_CT.set(sTemp)
         frame_5 = Frame(top)
@@ -69,7 +68,7 @@ pass
 class Page_Forecast(Page):
     def __init__(self, *args, **kwargs):
            Page.__init__(self, *args, **kwargs)
-           label = tk.Label(self, text="Forecast goes here")
+           label = Tkinter.Label(self, text="Forecast goes here")
            label.pack(side="top", fill="both", expand=True)
     pass
 pass
@@ -77,38 +76,34 @@ pass
 class Page_Costs(Page):
     def __init__(self, *args, **kwargs):
            Page.__init__(self, *args, **kwargs)
-           label = tk.Label(self, text="Cost goes here")
+           label = Tkinter.Label(self, text="Cost goes here")
            label.pack(side="top", fill="both", expand=True)
     pass
 pass
 
-class Setup_UI(self,cmd_Inc, cmd_Dec, sTemp, cTemp):
-    #Button Tab Set up
+class Setup_UI(Page):
+    def __init__(self, cmd_Inc, cmd_Dec, sTemp, cTemp):
+        pControl = Page_Controls(self)
+        pForecast = Page_Forecast(self)
+        pCost = Page_Costs(self)
 
-    pControl = Page_Controls(self)
-    pForecast = Page_Forecast(self)
-    pCost = Page_Costs(self)
+        buttonFrame = Frame(top)
+        buttonFrame.pack(side=LEFT)
 
-    buttonFrame = Frame(top)
-    buttonFrame.pack(side=LEFT)
+        containerFrame = Frame(top)
+        containerFrame.pack()
 
-    containerFrame = Frame(top)
-    containerFrame.pack()
+        button_Controls = Tkinter.Button(buttonFrame, text="Controls", height=3, width = 3, command=pControl.show)
+        button_Forecast = Tkinter.Button(buttonFrame, text="Forecast", height=3, width = 3, command=pForecast.show)
+        button_Costs = Tkinter.Button(buttonFrame, text="Costs", height=3, width = 3, command=pCost.show)
+        button_Controls.pack()
+        button_Forecast.pack()
+        button_Costs.pack()
 
-    button_Controls = Tkinter.Button(buttonFrame, text="Controls", height=3, width = 3, command=pControl.lift)
-    button_Forecast = Tkinter.Button(buttonFrame, text="Forecast", height=3, width = 3, command=pForecast.lift)
-    button_Costs = Tkinter.Button(buttonFrame, text="Costs", height=3, width = 3, command=pCost.lift)
-    button_Controls.pack()
-    button_Forecast.pack()
-    button_Costs.pack()
-
-    pControl.place(in_=containerFrame,x=0,y=0,relwidth=1,relheight=1)
-    pForecast.place(in_=containerFrame,x=0,y=0,relwidth=1,relheight=1)
-    pCost.place(in_=containerFrame,x=0,y=0,relwidth=1,relheight=1)
-
-
-
-
+#        pControl.place(in_=containerFrame,x=0,y=0,relwidth=1,relheight=1)
+#       pForecast.place(in_=containerFrame,x=0,y=0,relwidth=1,relheight=1)
+#       pCost.place(in_=containerFrame,x=0,y=0,relwidth=1,relheight=1)
+    pass
 pass
 
 def Default_setup1():
