@@ -2,20 +2,22 @@
 import urllib2
 import json
 import thread
+import Tkinter as tk
 from time import sleep
 
 API_KEY = '00e4d3271410a849'
 
+
 outside_temp = 0
 relative_Humidity = 0
-wind_String = "Null"
+wind = "Null"
 high = 0
 low = 0
 
 
 
 def Update_Data():
-    global outside_temp, relative_Humidity, wind_String, high, low
+    global outside_temp, relative_Humidity, wind, high, low
     print("Making API  call")
     while True:
         f = urllib2.urlopen('http://api.wunderground.com/api/' + API_KEY + '/geolookup/conditions/q/MI/Livonia.json')
@@ -24,7 +26,7 @@ def Update_Data():
         parsed_json = json.loads(json_string)
         outside_temp = parsed_json['current_observation']['temp_f']
         relative_Humidity = parsed_json['current_observation']['relative_humidity']
-        wind_String = parsed_json['current_observation']['wind_string']
+        wind = parsed_json['current_observation']['wind_string']
         #print(json_string)
         f.close()
 
@@ -37,7 +39,7 @@ def Update_Data():
         #print(json_string)
         g.close
 
-        sleep(3600)
+        sleep(30)
 pass
 
 def get_High():
@@ -54,14 +56,18 @@ def get_Outside_Temp():
 pass
 
 def get_Wind():
-    return wind_String
+    return wind
+pass
+
+def get_Humidity():
+    return relative_Humidity
 pass
 
 def print_Info():
     print("Updated Data")
     print("Outside Temp:", outside_temp)
     print("Relative Humidity:", relative_Humidity)
-    print(wind_String)
+    print(wind)
     print("High: ", high)
     print("Low: ", low)
 pass
@@ -78,6 +84,6 @@ if __name__ == "__main__":
     print("Updated Data")
     print("Outside Temp:", outside_temp)
     print("Relative Humidity:", relative_Humidity)
-    print(wind_String)
+    print(wind)
     print("High: ", high)
     print("Low: ", low)

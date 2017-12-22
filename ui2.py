@@ -10,12 +10,28 @@ display_HT = tk.IntVar()
 display_Hum = tk.IntVar()
 Mode = tk.IntVar()
 weather_OT = tk.IntVar()
-
+weather_Hum = tk.IntVar()
+weather_High = tk.IntVar()
+weather_Low = tk.IntVar()
+weather_Wind = tk.StringVar()
 setTemp = 60
 curTemp = 60
 
 BASE = RAISED
 SELECTED = FLAT
+
+def update_W_Data():
+    while (True):
+        print "Entering Update Weather Data"
+        weather_OT.set(weather.outside_temp)
+        weather_Hum.set(weather.get_Humidity())
+        weather_High.set(weather.get_High())
+        weather_Low.set(weather.get_Low())
+        weather_Wind.set(weather.get_Wind())
+        print weather_OT, weather_Hum, weather_High, weather_Low, weather_Wind
+        sleep(10)
+pass
+
 
 # a base tab class
 class Tab(Frame):
@@ -124,29 +140,56 @@ if __name__ == '__main__':
     
     
 
+
     tab2 = Tab(root, "Outside Weather")
     #Label(tab2, text="How are you??", bg='black', fg='#3366ff').pack(side=TOP, fill=BOTH, expand=YES)
     #txt = Text(tab2, width=50, height=20)
     #txt.focus()
     #txt.pack(side=LEFT, fill=X, expand=YES)
     #Button(tab2, text="Get", command=(lambda: write(txt.get('1.0', END).strip()))).pack(side=BOTTOM, expand=YES, fill=BOTH)
-    weather_OT.set(weather.get_Outside_Temp())
-    #weather_OT = weather.get_Outside_Temp()
+    weather_OT.set(weather.outside_temp)
+    weather_Hum.set(weather.get_Humidity())
+    weather_High.set(weather.get_High())
+    weather_Low.set(weather.get_Low())
+    weather_Wind.set(weather.get_Wind())
+
     frame_weather_1 = Frame(tab2)
     frame_weather_1.pack()
-    Label(frame_weather_1, text="Outside Tempature:").pack()
-    Label(frame_weather_1, textvariable=weather_OT , font=("Helvetica", 16), fg="Green").pack()
-    weather.print_Info()
+    Label(frame_weather_1, text="Outside Tempature:").pack(side = LEFT)
+    Label(frame_weather_1, textvariable=weather_OT , font=("Helvetica", 16), fg="Green").pack(side = RIGHT)
+    
+    frame_weather_2 = Frame(tab2)
+    frame_weather_2.pack()
+    Label(frame_weather_2, text="Relative Humidity:").pack(side = LEFT)
+    Label(frame_weather_2, textvariable=weather_Hum , font=("Helvetica", 16), fg="Green").pack(side = RIGHT)
+    
+    frame_weather_3 = Frame(tab2)
+    frame_weather_3.pack()
+    Label(frame_weather_3, text="High:").pack(side = LEFT)
+    Label(frame_weather_3, textvariable=weather_High , font=("Helvetica", 16), fg="Green").pack(side = RIGHT)
+    
+    frame_weather_4 = Frame(tab2)
+    frame_weather_4.pack()
+    Label(frame_weather_4, text="Low:").pack(side = LEFT)
+    Label(frame_weather_4, textvariable=weather_Low , font=("Helvetica", 16), fg="Green").pack(side = RIGHT)
+    
+    frame_weather_5 = Frame(tab2)
+    frame_weather_5.pack()
+    Label(frame_weather_5, text="Wind:").pack(side = LEFT)
+    Label(frame_weather_5, textvariable=weather_Wind , font=("Helvetica", 16), fg="Green").pack(side = RIGHT)
+    
     
         
     tab3 = Tab(root, "Info")
-    Label(tab3, bg='white', text="This tab was given as an argument to the TabBar constructor.\n\nINFO:\n").pack(side=LEFT, expand=YES, fill=BOTH)
+    Label(tab3, bg='white', text="Place holder. Should this be for cost estimates?").pack(side=LEFT, expand=YES, fill=BOTH)
         
     bar.add(tab1)                   # add the tabs to the tab bar
     bar.add(tab2)
     bar.add(tab3)
         
         #bar.config(bd=2, relief=RIDGE)			# add some border
+        
+    thread.start_new_thread(update_W_Data, ())
         
     bar.show()
         
