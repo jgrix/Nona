@@ -1,35 +1,37 @@
 #!/usr/bin/python
 
+####CHange to true for when running on the Raspberry Pi
+runningOnTarget = False
+########################
+
 import sys
 import Tkinter
-import DHT22
-import pigpio
+if runningOnTarget:
+    import DHT22
+    import RPi.GPIO as GPIO
+    import pigpio
+    import Relay_Fire
 import thread
 import CtoF
-import Relay_Fire
 import WriteTempData
 import atexit
-import UI
+#import UI
+import ui2
 #import TCPServer
-import RPi.GPIO as GPIO
+
 import atexit
 
 from time import sleep
 from Tkinter import *
 
-set_Temp = 60
 current_Temp = 60
+current_Humd = 50
 input_Temp_Up = 17
 input_Temp_Down = 22
 
-GPIO.setup(input_Temp_Up, GPIO.IN)
-GPIO.setup(input_Temp_Down, GPIO.IN)
+if runningOnTarget : GPIO.setup(input_Temp_Up, GPIO.IN)
+if runningOnTarget : GPIO.setup(input_Temp_Down, GPIO.IN)
 
-top = Tkinter.Tk()
-display_var = Tkinter.IntVar()
-display_CT = Tkinter.IntVar()
-display_Hum = Tkinter.IntVar()
-mode = Tkinter.IntVar()
 
 
 def Read_current_Tempature():
@@ -46,10 +48,11 @@ def Read_current_Tempature():
 		faren = CtoF.C_to_F(faren)
 		current_Temp = faren
 		print("Current Temp:",faren)
-		display_CT.set('{:.4}'.format(float(faren)))
+        #display_CT.set('{:.4}'.format(float(faren)))
 		myHum = sensor.humidity()
 		print("Humidity is:",myHum)
-		display_Hum.set('{:.4}'.format(float(myHum)))
+        current_Humd = muHum
+        #display_Hum.set('{:.4}'.format(float(myHum)))
 		myWrite.write(str(current_Temp), str(myHum))
 		sleep(3)
 
@@ -72,12 +75,10 @@ def Watch_For_Input_Pins():
 		if GPIO.input(input_Temp_Down):
 		        set_Temp-=1
 			print("Button press decrese temp")
-	
-
 
 pass
 
-def Fire_Furn():
+def Fire_Furn(setTemp, mode):
         #global mode
         #global current_Temp
         #global set_Temp
@@ -93,10 +94,10 @@ def Fire_Furn():
 			Relay_Fire.All_Off()
 		if mode == 1: #Heating
 			print("Heating")
-			if int(current_Temp) < int(set_Temp):
+			if int(current_Temp) < int(setTemp):
 				print("Fire heat on")				
 				Relay_Fire.Heat_On()
-			elif int(current_Temp) > int(set_Temp):
+			elif int(current_Temp) > int(seTemp):
 				print("Fire heat off")
 				Relay_Fire.All_Off()
 			else:
@@ -104,9 +105,9 @@ def Fire_Furn():
 			
 		if mode == 2: #Cooling
 			#print("Cooling")
-			if int(current_Temp) > int(set_Temp):
+			if int(current_Temp) > int(setTemp):
 				Relay_Fire.Cool_On()
-			elif int(current_Temp) < int(set_Temp):
+			elif int(current_Temp) < int(setTemp):
 				Relay_Fire.All_Off()
 
 		
@@ -115,57 +116,20 @@ pass
 
 def Close():
 	Relay_Fire.All_Off()
-		
-
-def Increase_Tempature():
-    "Increases the stored tempature"
-    global set_Temp
-#    print('Tempature was:', set_Temp)
-    set_Temp += 1
-    display_var.set(set_Temp)
-#    print('Tempature increased to:', set_Temp)
-pass
-
-def Decrease_Tempature():
-    "Decreases the stored tempature"
-    global set_Temp
-#    print('Tempature was:', set_Temp)
-    set_Temp -= 1
-    display_var.set(set_Temp)
-#    print('Tempature decreased to:', set_Temp)
-pass
-
-def Set_Target_temp(target):
-        global set_Temp
-        set_Temp = target
-        display_var.set(set_Temp)
-
-def Comms_Callback(arg1):
-	print("Message Received:", arg1)
-
-	if "Set Target Temp:" in arg1:
-		val = arg1.replace("Set Target Temp:","")
-		print("Setting the target temp to:",val)
-		Set_Target_temp(float(val))
-
 
 
 if __name__ == "__main__":
-	global data
-	Relay_Fire.Init_Power() #Fires our relay diverting power from the back up thermostat
-	atexit.register(Relay_Fire.Exit_Power)
-
-        UI.Setup_UI(Increase_Tempature, Decrease_Tempature, set_Temp, current_Temp)
-
+    top = Tkinter.Tk()
+    bar = ui2.TabBar(top, "Tempature Control")
+    bar.init_UI(top)
+    
+    
+    if runningOnTarget :
         thread.start_new_thread(Read_current_Tempature, ())
-        thread.start_new_thread(Fire_Furn, ())
+        thread.start_new_thread(Fire_Furn, (bar.setTemp, bar.Mode))
+        Relay_Fire.Init_Power() #Fires our relay diverting power from the back up thermostat
+        atexit.register(Relay_Fire.Exit_Power)
         atexit.register(Close)
 
-#	thread.start_new_thread(Watch_For_Input_Pins, ())
-#   	myComm = TCPServer.Andriod_Comms(Comms_Callback)
-#	myComm.start()
-
-
-
-
-	top.mainloop()
+        
+    top.mainloop()
