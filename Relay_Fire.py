@@ -23,7 +23,8 @@ pass
 
 def Heat_On():
 	GPIO.output(HEAT, GPIO.LOW)
-        GPIO.output(COOL, GPIO.HIGH)
+    GPIO.output(COOL, GPIO.HIGH)
+	GPIO.output(FAN, GPIO.HIGH)
 	#print("Firing Heat")
 pass
 
@@ -33,13 +34,19 @@ pass
 
 def Cool_On():
 	GPIO.output(COOL, GPIO.LOW)
-        GPIO.output(HEAT, GPIO.HIGH)
+    GPIO.output(HEAT, GPIO.HIGH)
+	GPIO.output(FAN, GPIO.HIGH)
 	#print("Firing Cool")
 pass
 
 def Cool_Off():
 	GPIO.output(COOL, GPIO.HIGH)
 pass
+
+def Fan_ON():
+    GPIO.output(FAN, GPIO.LOW)
+    GPIO.output(HEAT, GPIO.HIGH)
+	GPIO.output(COOL, GPIO.HIGH)
 
 def All_Off():
 	GPIO.output(HEAT, GPIO.HIGH)

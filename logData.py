@@ -5,7 +5,7 @@ from datetime import time
 
 
 
-def logTemps(setTemp, currentTemp, outsideTemp, high, low, humidity, wind, furnance_firing):
+def logTemps(setTemp, currentTemp, outsideTemp, high, low, humidity, wind, furnance_firing, mode):
 
     date_reg = datetime.date.today()
     time_reg = datetime.datetime.utcnow()
@@ -18,7 +18,7 @@ def logTemps(setTemp, currentTemp, outsideTemp, high, low, humidity, wind, furna
 
     write1 = "SetTemp:" + str(setTemp) + ", CurTemp:" + str(currentTemp) + ", outTemp:" + str(outsideTemp)
     write2 = ", high:" + str(high) + ", low:" + str(low) + ", Humidity:" + str(humidity) + ", Wind:" + str(wind)
-    write3 = ", furn_fire:" + str(furnance_firing) + ", " + str(time_reg.hour) + ":" + str(time_reg.minute) + ":" + str(time_reg.second) + "\n"
+    write3 = ", furn_fire:" + str(furnance_firing) + ", Mode:" + str(mode) + ", "  + str(time_reg.hour) + ":" + str(time_reg.minute) + ":" + str(time_reg.second) + "\n"
     
     myFile.write(write1 + write2 + write3 )
 
